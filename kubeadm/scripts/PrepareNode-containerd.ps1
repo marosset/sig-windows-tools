@@ -18,11 +18,7 @@ PS> .\PrepareNode.ps1 -KubernetesVersion v1.17.0
 
 Param(
     [parameter(Mandatory = $true, HelpMessage="Kubernetes version to use")]
-    [string] $KubernetesVersion,
-    [parameter(HelpMessage="ContainerD version to use")]
-    [string] $ContainerDVersion = "1.4.1",
-    [parameter(HelpMessage="Name of network adapter")]
-    [string] $AdapterName = "Ethernet"
+    [string] $KubernetesVersion
 )
 $ErrorActionPreference = 'Stop'
 
@@ -168,6 +164,7 @@ $cmd = "C:\k\kubelet.exe $global:KubeletArgs --cert-dir=$env:SYSTEMDRIVE\var\lib
 Invoke-Expression $cmd'
 Set-Content -Path $global:StartKubeletScript -Value $StartKubeletFileContent
 
+<#
 Write-Host "Installing nssm"
 $arch = "win32"
 if ([Environment]::Is64BitOperatingSystem) {
@@ -188,5 +185,7 @@ $newPath = "$global:NssmInstallDirectory;" +
 Write-Host "Registering kubelet service"
 nssm install kubelet $global:Powershell $global:PowershellArgs $global:StartKubeletScript
 #nssm set kubelet DependOnService containerd
+
+#>
 
 New-NetFirewallRule -Name kubelet -DisplayName 'kubelet' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 10250
