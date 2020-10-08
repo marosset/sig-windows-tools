@@ -1,6 +1,8 @@
 Param(
-    [parameter(HelpMessage="ContainerD version to use")]
-    [string] $ContainerDVersion = "1.4.1"
+    [parameter(HelpMessage = "ContainerD version to use")]
+    [string] $ContainerDVersion = "1.4.1",
+    [parameter(HelpMessage = "Run container as a Windows Service")]
+    [bool] $RunAsService = $true
 )
 
 $ErrorActionPreference = 'Stop'
@@ -15,14 +17,9 @@ function DownloadFile($destination, $source) {
     }
 }
 
-if (!$ContainerDVersion.StartsWith("v")) {
-    $ContainerDVersion = "v" + $ContainerDVersion
-}
-
-
 $global:ConainterDPath = "$env:ProgramFiles\containerd"
-mkdir -force $global:ConainterDPath
-DownloadFile "$global:ConainterDPath\containerd.tar.gz" https://github.com/containerd/containerd/releases/download/v1.4.1/containerd-1.4.1-windows-amd64.tar.gz
+mkdir -Force $global:ConainterDPath
+DownloadFile "$global:ConainterDPath\containerd.tar.gz" https://github.com/containerd/containerd/releases/download/v${ContainerDVersion}/containerd-${ContainerDVersion}-windows-amd64.tar.gz
 tar.exe -xvf "$global:ConainterDPath\containerd.tar.gz" --strip=1 -C $global:ConainterDPath
 $env:Path += ";$global:ConainterDPath"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
@@ -33,8 +30,10 @@ $config = $config -replace "bin_dir = (.)*$", "bin_dir = `"c:/opt/cni/bin`""
 $config = $config -replace "conf_dir = (.)*$", "conf_dir = `"c:/etc/cni/net.d`""
 $config | Set-Content "$global:ConainterDPath\config.toml" -Force 
 
-mkdir -force c:\opt\cni\bin
-mkdir -force c:\etc\cni\net.d
+mkdir -Force c:\opt\cni\bin
+mkdir -Force c:\etc\cni\net.d
 
-#containerd.exe --register-service
-#Get-Service -Name "containerd" | Start-Service
+if ($RunAsService) {
+    containerd.exe --register-service
+    Get-Service
+}
