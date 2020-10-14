@@ -47,6 +47,34 @@ function CalculateSubNet {
     return "${subnetIp}/$cidr"
 }
 
+$requiredWindowsFeatures = @(
+    "Containers",
+    "Hyper-V",
+    "Hyper-V-PowerShell")
+
+function ValidateWindowsFeatures {
+    $allFeaturesInstalled = $true
+    foreach ($feature in $requiredWindowsFeatures) {
+        $f = Get-WindowsFeature -Name $feature | Out-null
+        if (-not $f.Installed) {
+            Write-Warning "Windows feature: '$feature' is not instealled."
+            $allFeaturesInstalled = $false
+        }
+    }
+    return $allFeaturesInstalled
+}
+
+if (-not (ValidateWindowsFeatures)) {
+    Write-Out "Installing required windows features..."
+
+    foreach ($feature in $requiredWindowsFeatures) {
+        Install-WindowsFeature -Name $feature
+    }
+
+    Write-Out "Please reboot and re-run this script."
+    exit 0
+}
+
 $global:ConainterDPath = "$env:ProgramFiles\containerd"
 mkdir -Force $global:ConainterDPath
 DownloadFile "$global:ConainterDPath\containerd.tar.gz" https://github.com/containerd/containerd/releases/download/v${ContainerDVersion}/containerd-${ContainerDVersion}-windows-amd64.tar.gz
