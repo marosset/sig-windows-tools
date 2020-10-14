@@ -23,7 +23,7 @@ data:
     $networkJson = wins cli net get | convertfrom-json
 
     $cniJson.delegate.AdditionalArgs[0].Value.Settings.Exceptions = $serviceSubnet, $podSubnet
-    $cniJson.delegate.policies[1].Value.Settings.DestinationPrefix = $serviceSubnet
+    $cniJson.delegate.AdditionalArgs[1].Value.Settings.DestinationPrefix = $serviceSubnet
     Set-Content -Path /host/etc/cni/net.d/10-flannel.conf ($cniJson | ConvertTo-Json -depth 100)
 
     cp -force /etc/kube-flannel/net-conf.json /host/etc/kube-flannel
