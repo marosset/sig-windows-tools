@@ -165,8 +165,6 @@ spec:
               name: cni-bin-dir
             - mountPath: /host/etc/cni/net.d
               name: cni-net-dir
-            - name: kubeadm-config
-              mountPath: /etc/kubeadm-config/
           securityContext:
             windowsOptions:
               hostProcess: true
@@ -233,6 +231,3 @@ spec:
       - name: cni-net-dir
         hostPath:
           path: /etc/cni/net.d
-      - name: kubeadm-config
-        configMap:
-          name: kubeadm-config

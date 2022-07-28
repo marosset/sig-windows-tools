@@ -10,11 +10,7 @@ $token = Get-Content -Path "$env:CONTAINER_SANDBOX_MOUNT_POINT/var/run/secrets/k
 $ca = Get-Content -Raw -Path "$env:CONTAINER_SANDBOX_MOUNT_POINT/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 $caBase64 = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($ca))
 
-# TODO figure out how the kubernetes service endpoint works in Linux.  
-# For windows since kubeproxy hasn't started the endpoints are not configured on the SVC
-# look it up via kubeadm configuration
-$cpEndpoint = get-content $env:CONTAINER_SANDBOX_MOUNT_POINT/etc/kubeadm-config/ClusterConfiguration | ForEach-Object -Process {if($_.Contains("controlPlaneEndpoint:")) {$_.Trim().Split()[1]}}
-$server = "server: https://$cpEndpoint"
+$server = "server: https://${env:KUBERNETES_SERVICE_HOST}:${env:KUBERNETES_SERVICE_PORT_HTTPS}"
 
 (Get-Content $env:CONTAINER_SANDBOX_MOUNT_POINT\calico\calico-kube-config.template).
     replace('<ca>', $caBase64).

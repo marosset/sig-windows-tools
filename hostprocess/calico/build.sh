@@ -18,7 +18,7 @@ esac; shift; done
 if [[ "$1" == '--' ]]; then shift; fi
 
 repository=${repository:-"sigwindowstools"}
-calicoVersion=${calicoVersion:-"v3.20.0"}
+calicoVersion=${calicoVersion:-"v3.23.0"}
 
 docker buildx create --name img-builder --use --platform windows/amd64
 trap 'docker buildx rm img-builder' EXIT

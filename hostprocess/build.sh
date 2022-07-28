@@ -2,7 +2,7 @@
 
 repository=${repository:-"sigwindowstools"}
 flannelVersion=${flannelVersion:-"v0.14.0"}
-calicoVersion=${calicoVersion:-"v3.23.0"}
+calicoVersion=${calicoVersion:-"v3.23.3"}
 
 SCRIPTROOT=$(dirname "${BASH_SOURCE[0]}")
 pushd $SCRIPTROOT/flannel
