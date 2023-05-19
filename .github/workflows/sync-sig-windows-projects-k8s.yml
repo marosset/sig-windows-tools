@@ -13,8 +13,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: sync SIG-Windows project - kubernetes org
+      - name: sync SIG-Windows projects - kubernetes org
         env:
           GITHUB_TOKEN: ${{ secrets.SYNC_PROJECTS_PAT }}
+        run: |
+          ./hack/sync-project-board.sh
+      - name: synd SIG-Windows projects - kubernete-sigs org
+        env:
+          GITHUB_TOKEN: ${{ secrets.SYNC_PROJECTS_PAT }}
+          GH_ORG: "kubernetes-sigs"
+          ISSUES_PROJECT_NUMBER: 41
+          PRS_PROJECT_NUMBER: 42
         run: |
           ./hack/sync-project-board.sh

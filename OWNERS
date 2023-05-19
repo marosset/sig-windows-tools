@@ -7,3 +7,4 @@ approvers:
   - marosset
 labels:
   - tide/merge-method-squash
+  - sig/windows
